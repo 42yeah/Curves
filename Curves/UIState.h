@@ -15,6 +15,11 @@ enum class State {
     TangentHighlighting
 };
 
+enum class RendererState {
+    Spline,
+    Bezier
+};
+
 /// Finite state machine because apparently UI control is very annoying.
 /// Here's how it works:
 ///                       ┌────────┐
@@ -56,12 +61,14 @@ class UIState {
 public:
     UIState() {
         state = State::Nothing;
+        renderer_state = RendererState::Bezier;
 
         highlighting_item = { -1, 0.0f };
         tangent_highlighting_item = { -1, 0.0f };
     }
 
     State state;
+    RendererState renderer_state;
 
     /// Records the current highlighting item and its distance.
     std::pair<int, float> highlighting_item;

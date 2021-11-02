@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Curves.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\libraries\glad\src\glad.c">
@@ -60,6 +60,9 @@
     <ClCompile Include="BlueprintRenderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BezierRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="standards.h">
@@ -81,6 +84,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="BlueprintRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierRenderer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

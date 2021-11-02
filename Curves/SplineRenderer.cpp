@@ -71,7 +71,6 @@ std::vector<glm::vec3> SplineRenderer::expand(std::vector<glm::vec3>& keypoints)
     return ret;
 }
 
-
 void SplineRenderer::set_keypoints(std::vector<glm::vec3>& keypoints) {
     this->keypoints = keypoints;
     expanded = expand(keypoints);
@@ -195,3 +194,30 @@ void SplineRenderer::render() {
     }
 }
 
+void SplineRenderer::set_tangent(int tangent) {
+    this->tangent = tangent;
+}
+
+void SplineRenderer::set_anchor(int anchor) {
+    this->anchor = anchor;
+}
+
+int SplineRenderer::get_anchor() {
+    return anchor;
+}
+
+void SplineRenderer::set_highlight(int highlight) {
+    this->highlight = highlight;
+}
+
+void SplineRenderer::set_slope(glm::vec2 slope) {
+    this->slope = slope;
+}
+
+void SplineRenderer::set_tangent_highlight(int highlight) {
+    this->tangent_highlight = tangent_highlight;
+}
+
+std::vector<glm::vec3>& SplineRenderer::get_tangent_lines() {
+    return tangent_lines;
+}

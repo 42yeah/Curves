@@ -31,3 +31,31 @@ void BlueprintRenderer::render() {
     glUniform1f(program.loc("aspect"), ASPECT);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+
+
+// Those functions are useless for BlueprintRenderer
+void BlueprintRenderer::set_tangent(int tangent) {
+}
+
+void BlueprintRenderer::set_keypoints(std::vector<glm::vec3>& keypoints) {
+}
+
+void BlueprintRenderer::set_anchor(int anchor) {
+}
+
+int BlueprintRenderer::get_anchor() {
+    return 0;
+}
+
+void BlueprintRenderer::set_highlight(int highlight) {
+}
+
+void BlueprintRenderer::set_slope(glm::vec2 slope) {
+}
+
+void BlueprintRenderer::set_tangent_highlight(int highlight) {
+}
+
+std::vector<glm::vec3>& BlueprintRenderer::get_tangent_lines() {
+    return dummy_tangent_lines;
+}
