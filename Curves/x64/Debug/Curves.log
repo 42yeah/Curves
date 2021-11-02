@@ -1,1 +1,40 @@
-﻿  Curves.vcxproj -> C:\Users\42yea\source\repos\Curves\x64\Debug\Curves.exe
+﻿  glad.c
+  imgui_impl_glfw.cpp
+  imgui_impl_opengl3.cpp
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  BlueprintRenderer.cpp
+  Curves.cpp
+C:\Users\42yea\source\repos\Curves\Curves\Curves.cpp(73,16): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\42yea\source\repos\Curves\Curves\Curves.cpp(84,19): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\42yea\source\repos\Curves\Curves\Curves.cpp(121,50): warning C4244: '+=' : conversion de 'double' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+C:\Users\42yea\source\repos\Curves\Curves\Curves.cpp(124,50): warning C4244: '+=' : conversion de 'double' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+C:\Users\42yea\source\repos\Curves\Curves\Curves.cpp(127,50): warning C4244: '-=' : conversion de 'double' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+C:\Users\42yea\source\repos\Curves\Curves\Curves.cpp(130,50): warning C4244: '-=' : conversion de 'double' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+  Program.cpp
+  Renderer.cpp
+  solver.cpp
+  SplineRenderer.cpp
+  UIState.cpp
+  Génération de code en cours...
+LINK : warning LNK4098: conflit entre la bibliothèque par défaut 'MSVCRT' et les autres bibliothèques?; utilisez /NODEFAULTLIB:library
+  Curves.vcxproj -> C:\Users\42yea\source\repos\Curves\x64\Debug\Curves.exe

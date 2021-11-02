@@ -116,7 +116,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\42yea\libraries\glm;C:\Users\42yea\libraries\glad\include;C:\Users\42yea\libraries\glfw-3.3.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\42yea\source\repos\Curves\imgui;C:\Users\42yea\libraries\glm;C:\Users\42yea\libraries\glad\include;C:\Users\42yea\libraries\glfw-3.3.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,7 +145,29 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\libraries\glad\src\glad.c" />
+    <ClCompile Include="..\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\imgui\imgui.cpp" />
+    <ClCompile Include="..\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="BlueprintRenderer.cpp" />
     <ClCompile Include="Curves.cpp" />
+    <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="solver.cpp" />
+    <ClCompile Include="SplineRenderer.cpp" />
+    <ClCompile Include="UIState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BlueprintRenderer.h" />
+    <ClInclude Include="Program.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="solver.h" />
+    <ClInclude Include="SplineRenderer.h" />
+    <ClInclude Include="standards.h" />
+    <ClInclude Include="UIState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
