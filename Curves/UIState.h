@@ -16,8 +16,8 @@ enum class State {
 };
 
 enum class RendererState {
-    Spline,
-    Bezier
+    Spline = 0,
+    Bezier = 1
 };
 
 /// Finite state machine because apparently UI control is very annoying.
@@ -61,7 +61,7 @@ class UIState {
 public:
     UIState() {
         state = State::Nothing;
-        renderer_state = RendererState::Bezier;
+        renderer_state = RendererState::Spline;
 
         highlighting_item = { -1, 0.0f };
         tangent_highlighting_item = { -1, 0.0f };
@@ -69,6 +69,7 @@ public:
 
     State state;
     RendererState renderer_state;
+    RendererState old_state;
 
     /// Records the current highlighting item and its distance.
     std::pair<int, float> highlighting_item;

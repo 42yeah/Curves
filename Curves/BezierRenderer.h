@@ -8,6 +8,8 @@ class BezierRenderer : public Renderer {
 public:
     BezierRenderer();
 
+    std::vector<glm::vec3> expand(std::vector<glm::vec3> &points);
+
     virtual void render() override;
 
     virtual void set_tangent(int tangent) override;
@@ -26,9 +28,10 @@ public:
 
     virtual std::vector<glm::vec3>& get_tangent_lines() override;
 
-    GLuint VAO, VBO, dots_VAO, dots_VBO;
+    GLuint VAO, VBO, dots_VAO, dots_VBO, convex_VAO, convex_VBO;
     std::vector<glm::vec3> keypoints;
-    Program dots_prog;
+    std::vector<glm::vec3> expanded;
+    Program dots_prog, bezier_prog, convex_prog;
 
     int highlight;
 };

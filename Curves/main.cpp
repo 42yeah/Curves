@@ -58,8 +58,8 @@ int main(int argc, const char* argv[]) {
     BlueprintRenderer blueprint;
     SplineRenderer spline_renderer;
     BezierRenderer bezier_renderer;
-    Renderer &renderer = bezier_renderer;
-    renderer.set_keypoints(keypoints);
+    Renderer *renderer = &spline_renderer;
+    renderer->set_keypoints(keypoints);
 
     // ImGui initialization
     ImGui::CreateContext();
@@ -76,24 +76,24 @@ int main(int argc, const char* argv[]) {
     float time = glfwGetTime();
     UIState ui_state;
 
+    // Renderer select
+    const char* renderers[] = { "样条", "贝塞尔曲线" };
+
     while (!glfwWindowShouldClose(window)) {
-        GLuint code = glGetError();
-        if (code != GL_NONE) {
-            std::cerr << "WHOOPS! Big problem: " << code << std::endl;
-            ImGui::ShowDemoWindow();
-            return -2;
-        }
-
         // State switch
-        switch (ui_state.renderer_state) {
-        case RendererState::Bezier:
-            renderer = bezier_renderer;
-            break;
+        if (ui_state.old_state != ui_state.renderer_state) {
+            switch (ui_state.renderer_state) {
+            case RendererState::Bezier:
+                renderer = &bezier_renderer;
+                break;
 
-        case RendererState::Spline:
-            renderer = spline_renderer;
-            break;
+            case RendererState::Spline:
+                renderer = &spline_renderer;
+                break;
+            }
+            renderer->set_keypoints(keypoints);
         }
+        ui_state.old_state = ui_state.renderer_state;
 
         float now = glfwGetTime();
         float delta_time = now - time;
@@ -102,9 +102,9 @@ int main(int argc, const char* argv[]) {
         // Value upate
         ortho = glm::ortho(-1.0f / scale * ASPECT, 1.0f / scale * ASPECT, -1.0f / scale, 1.0f / scale, 0.01f, 10.0f);
         view = glm::lookAt(glm::vec3(-offset.x, offset.y, -1.0f), glm::vec3(-offset.x, offset.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        renderer.ortho = ortho;
-        renderer.view = view;
-        renderer.scale = scale;
+        renderer->ortho = ortho;
+        renderer->view = view;
+        renderer->scale = scale;
         blueprint.offset = offset;
         blueprint.scale = scale;
 
@@ -113,10 +113,10 @@ int main(int argc, const char* argv[]) {
                 (ui_state.state == State::Selected ||
                     ui_state.state == State::TangentHighlighting ||
                     ui_state.state == State::Tangent)) {
-                renderer.set_tangent(ui_state.selected_item);
+                renderer->set_tangent(ui_state.selected_item);
             }
             else {
-                renderer.set_tangent(-1);
+                renderer->set_tangent(-1);
             }
         }
 
@@ -153,11 +153,18 @@ int main(int argc, const char* argv[]) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         blueprint.render();
-        renderer.render();
+        renderer->render();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        GLuint code = glGetError();
+        if (code != GL_NONE) {
+            std::cerr << "WHOOPS! Big problem: " << code << std::endl;
+            ImGui::ShowDemoWindow();
+            return -2;
+        }
 
         NEXT(10.0f, 10.0f, 300.0f, 300.0f);
         if (ImGui::Begin("绘制曲线")) {
@@ -175,7 +182,7 @@ int main(int argc, const char* argv[]) {
                 for (int i = 0; i < num_points; i++) {
                     keypoints.push_back(glm::vec3(distrib(dev) * 2.0f - 1.0f, distrib(dev) * 2.0f - 1.0f, 0.0f));
                 }
-                renderer.set_keypoints(keypoints);
+                renderer->set_keypoints(keypoints);
             }
         }
         ImGui::End();
@@ -230,6 +237,12 @@ int main(int argc, const char* argv[]) {
         }
         ImGui::End();
 
+        NEXT(10.0f, 320.0f, 300.0f, 100.0f);
+        if (ImGui::Begin("模式")) {
+            ImGui::Combo("模式选择", (int *) &ui_state.renderer_state, renderers, IM_ARRAYSIZE(renderers));
+        }
+        ImGui::End();
+
         ImGui::Render();
         glViewport(0, 0, FBO_W, FBO_H);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -248,11 +261,11 @@ int main(int argc, const char* argv[]) {
                 }
             }
             if (ui_state.highlighting_item.first != -1) {
-                renderer.set_highlight(ui_state.highlighting_item.first);
+                renderer->set_highlight(ui_state.highlighting_item.first);
                 ui_state.state = State::Highlighting;
             }
             else {
-                renderer.set_highlight(-1);
+                renderer->set_highlight(-1);
             }
         }
         else if (ui_state.state == State::Selected || ui_state.state == State::TangentHighlighting) {
@@ -260,8 +273,8 @@ int main(int argc, const char* argv[]) {
 
             if (ui_state.renderer_state == RendererState::Spline) {
                 ui_state.tangent_highlighting_item = { -1, 0.0f };
-                for (int i = 0; i < renderer.get_tangent_lines().size(); i++) {
-                    float dist = glm::distance(glm::vec2(renderer.get_tangent_lines()[i]), mouse);
+                for (int i = 0; i < renderer->get_tangent_lines().size(); i++) {
+                    float dist = glm::distance(glm::vec2(renderer->get_tangent_lines()[i]), mouse);
                     if (dist < (1.0f / scale) * 5e-2 &&
                         (ui_state.tangent_highlighting_item.first == -1 || (dist < ui_state.tangent_highlighting_item.second))) {
                         ui_state.tangent_highlighting_item = { i, dist };
@@ -269,10 +282,10 @@ int main(int argc, const char* argv[]) {
                 }
                 if (ui_state.tangent_highlighting_item.first != -1) {
                     ui_state.state = State::TangentHighlighting;
-                    renderer.set_tangent_highlight(ui_state.tangent_highlighting_item.first);
+                    renderer->set_tangent_highlight(ui_state.tangent_highlighting_item.first);
                 }
                 else {
-                    renderer.set_tangent_highlight(-1);
+                    renderer->set_tangent_highlight(-1);
                 }
             }
 
@@ -282,10 +295,10 @@ int main(int argc, const char* argv[]) {
             if (ui_state.state == State::Nothing && !io.WantCaptureMouse) {
                 // Create, then enter dragging state
                 keypoints.push_back(glm::vec3(mouse, 0.0f));
-                if (ui_state.renderer_state == RendererState::Spline && renderer.get_anchor() == keypoints.size() - 2) {
-                    renderer.set_anchor(keypoints.size() - 1);
+                if (ui_state.renderer_state == RendererState::Spline && renderer->get_anchor() == keypoints.size() - 2) {
+                    renderer->set_anchor(keypoints.size() - 1);
                 }
-                renderer.set_keypoints(keypoints);
+                renderer->set_keypoints(keypoints);
                 // Highlight this one
                 ui_state.state = State::Highlighting;
                 ui_state.highlighting_item.first = (int)(keypoints.size() - 1);
@@ -295,14 +308,14 @@ int main(int argc, const char* argv[]) {
                 ui_state.state = State::Dragging;
                 ui_state.dragging_item = ui_state.highlighting_item.first;
                 ui_state.offset = glm::vec2(keypoints[ui_state.dragging_item]) - mouse;
-                renderer.set_highlight(ui_state.dragging_item);
+                renderer->set_highlight(ui_state.dragging_item);
             }
             else if (ui_state.state == State::Dragging) {
                 // Drag
                 keypoints[ui_state.dragging_item] = glm::vec3(mouse.x + ui_state.offset.x,
                     mouse.y + ui_state.offset.y,
                     1.0f);
-                renderer.set_keypoints(keypoints);
+                renderer->set_keypoints(keypoints);
             }
             else if (ui_state.state == State::Selected && !io.WantCaptureMouse) {
                 if (glm::distance(glm::vec2(keypoints[ui_state.selected_item]), mouse) < 5e-2) {
@@ -311,15 +324,15 @@ int main(int argc, const char* argv[]) {
                 }
                 else {
                     keypoints[ui_state.dragging_item].z = 0.0f;
-                    renderer.set_keypoints(keypoints);
+                    renderer->set_keypoints(keypoints);
                     ui_state.state = State::Transition;
-                    renderer.set_highlight(-1);
+                    renderer->set_highlight(-1);
                 }
             }
             else if (ui_state.state == State::TangentHighlighting && !io.WantCaptureMouse) {
                 // Activate tangent drag mode
                 ui_state.state = State::Tangent;
-                ui_state.offset = glm::vec2(renderer.get_tangent_lines()[ui_state.tangent_highlighting_item.first]) - mouse;
+                ui_state.offset = glm::vec2(renderer->get_tangent_lines()[ui_state.tangent_highlighting_item.first]) - mouse;
             }
             else if (ui_state.state == State::Tangent) {
                 glm::vec2 pos = glm::normalize(glm::vec2(mouse.x + ui_state.offset.x,
@@ -327,9 +340,9 @@ int main(int argc, const char* argv[]) {
                 if (ui_state.tangent_highlighting_item.first == 1) {
                     pos = -pos;
                 }
-                renderer.set_anchor(ui_state.selected_item);
-                renderer.set_slope(pos);
-                renderer.set_keypoints(keypoints);
+                renderer->set_anchor(ui_state.selected_item);
+                renderer->set_slope(pos);
+                renderer->set_keypoints(keypoints);
             }
         }
         else if (ui_state.state == State::Dragging) {

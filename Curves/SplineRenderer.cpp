@@ -116,7 +116,6 @@ SplineRenderer::SplineRenderer() {
     view = glm::mat4(1.0f);
 
     highlight = -1;
-    prev_highlight = -1;
     tangent = -1;
 
     anchor = 0;
@@ -125,19 +124,6 @@ SplineRenderer::SplineRenderer() {
 
 
 void SplineRenderer::render() {
-    if (highlight != prev_highlight) {
-        glBindVertexArray(dots_VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, dots_VBO);
-        if (prev_highlight != -1) {
-            keypoints[prev_highlight].z = 0.0f;
-            glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * prev_highlight, sizeof(glm::vec3), &keypoints[prev_highlight]);
-        }
-        if (highlight != -1) {
-            keypoints[highlight].z = 1.0f;
-            glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * highlight, sizeof(glm::vec3), &keypoints[highlight]);
-        }
-        prev_highlight = highlight;
-    }
     if (tangent != -1) {
         glm::vec2 center_point = glm::vec2(keypoints[tangent]);
         tangent_lines.clear();
@@ -162,6 +148,7 @@ void SplineRenderer::render() {
         }
         tangent_lines.push_back(glm::vec3(center_point.x + dir.x * 0.1f, center_point.y + dir.y * 0.1f, z1));
         tangent_lines.push_back(glm::vec3(center_point.x - dir.x * 0.1f, center_point.y - dir.y * 0.1f, z2));
+
         glBindVertexArray(tangent_VAO);
         glBindBuffer(GL_ARRAY_BUFFER, tangent_VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * tangent_lines.size(), &tangent_lines[0]);
@@ -207,7 +194,19 @@ int SplineRenderer::get_anchor() {
 }
 
 void SplineRenderer::set_highlight(int highlight) {
-    this->highlight = highlight;
+    if (highlight != this->highlight) {
+        glBindVertexArray(dots_VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, dots_VBO);
+        if (this->highlight != -1) {
+            keypoints[this->highlight].z = 0.0f;
+            glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * this->highlight, sizeof(glm::vec3), &keypoints[this->highlight]);
+        }
+        if (highlight != -1) {
+            keypoints[highlight].z = 1.0f;
+            glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * highlight, sizeof(glm::vec3), &keypoints[highlight]);
+        }
+        this->highlight = highlight;
+    }
 }
 
 void SplineRenderer::set_slope(glm::vec2 slope) {
@@ -215,7 +214,7 @@ void SplineRenderer::set_slope(glm::vec2 slope) {
 }
 
 void SplineRenderer::set_tangent_highlight(int highlight) {
-    this->tangent_highlight = tangent_highlight;
+    this->tangent_highlight = highlight;
 }
 
 std::vector<glm::vec3>& SplineRenderer::get_tangent_lines() {

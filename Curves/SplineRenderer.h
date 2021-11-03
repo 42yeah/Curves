@@ -38,7 +38,7 @@ public:
 
     GLuint VAO, VBO, dots_VAO, dots_VBO, tangent_VAO, tangent_VBO;
 
-    int highlight, prev_highlight;
+    int highlight;
     int tangent, tangent_highlight;
 
     int anchor;
