@@ -43,7 +43,7 @@ int main(int argc, const char* argv[]) {
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    int num_points = 2;
+    int num_points = 5;
     std::vector<glm::vec3> keypoints;
     std::uniform_real_distribution distrib;
     std::random_device dev;
@@ -109,8 +109,7 @@ int main(int argc, const char* argv[]) {
         blueprint.scale = scale;
 
         if (ui_state.renderer_state == RendererState::Spline) {
-            if ((ui_state.selected_item == 0 || ui_state.selected_item == keypoints.size() - 1) &&
-                (ui_state.state == State::Selected ||
+            if ((ui_state.state == State::Selected ||
                     ui_state.state == State::TangentHighlighting ||
                     ui_state.state == State::Tangent)) {
                 renderer->set_tangent(ui_state.selected_item);

@@ -1,2 +1,24 @@
-﻿  solver.cpp
+﻿  main.cpp
+C:\Users\42yea\source\repos\Curves\Curves\main.cpp(76,16): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\42yea\source\repos\Curves\Curves\main.cpp(98,19): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\42yea\source\repos\Curves\Curves\main.cpp(137,50): warning C4244: '+=' : conversion de 'double' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+C:\Users\42yea\source\repos\Curves\Curves\main.cpp(140,50): warning C4244: '+=' : conversion de 'double' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+C:\Users\42yea\source\repos\Curves\Curves\main.cpp(143,50): warning C4244: '-=' : conversion de 'double' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+C:\Users\42yea\source\repos\Curves\Curves\main.cpp(146,50): warning C4244: '-=' : conversion de 'double' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
   Curves.vcxproj -> C:\Users\42yea\source\repos\Curves\x64\Debug\Curves.exe
