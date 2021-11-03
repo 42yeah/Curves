@@ -12,10 +12,6 @@ public:
 
     virtual void set_keypoints(std::vector<glm::vec3>& keypoints) override;
 
-    virtual void set_anchor(int anchor) override;
-
-    virtual int get_anchor() override;
-
     virtual void set_highlight(int highlight) override;
 
     virtual void set_slope(glm::vec2 slope) override;

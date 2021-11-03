@@ -40,13 +40,6 @@ void BlueprintRenderer::set_tangent(int tangent) {
 void BlueprintRenderer::set_keypoints(std::vector<glm::vec3>& keypoints) {
 }
 
-void BlueprintRenderer::set_anchor(int anchor) {
-}
-
-int BlueprintRenderer::get_anchor() {
-    return 0;
-}
-
 void BlueprintRenderer::set_highlight(int highlight) {
 }
 

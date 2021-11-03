@@ -105,14 +105,6 @@ void BezierRenderer::set_keypoints(std::vector<glm::vec3>& keypoints) {
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * convex.size(), &convex[0]);
 }
 
-void BezierRenderer::set_anchor(int anchor) {
-    throw "Not supported";
-}
-
-int BezierRenderer::get_anchor() {
-    throw "Not supported";
-}
-
 void BezierRenderer::set_highlight(int highlight) {
     if (highlight != this->highlight) {
         glBindVertexArray(dots_VAO);

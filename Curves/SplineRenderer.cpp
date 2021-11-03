@@ -6,73 +6,42 @@
 
 std::vector<glm::vec3> SplineRenderer::expand(std::vector<glm::vec3>& keypoints) {
     std::vector<glm::vec3> ret;
-    solves.clear();
-    solves.resize(keypoints.size() - 1);
+    std::vector<glm::vec3> interpolated;
 
     // Solve the anchor first
     // Propagate forward
     bool executed = false;
-    for (int i = anchor; i < keypoints.size() - 1; i++) {
+    for (int i = 0; i < keypoints.size() - 1; i++) {
         executed = true;
         glm::vec3 kp1 = keypoints[i];
         glm::vec3 kp2 = keypoints[i + 1];
-        glm::mat3x2 solved(1.0f);
+        glm::vec2 dir1 = directions[i];
+        glm::vec2 dir2 = directions[i + 1];
+        glm::mat4x2 solved(1.0f);
 
-        if (i != anchor) {
-            solved = solve(kp1, kp2, solves[i - 1], {});
-        }
-        else {
-            glm::mat3x2 initial = glm::mat3x2(glm::vec2(0.0f), slope, glm::vec2(0.0f));
-            solved = solve(kp1, kp2, initial, {});
-        }
-        solves[i] = solved;
+        solved = solve(kp1, kp2, dir1, dir2);
 
-        glm::vec3 prev(0.0f);
-        ret.push_back(kp1);
-        for (int j = 1; j <= INTERPOLATION_COUNT; j++) {
-            if (j != 1) {
-                ret.push_back(prev);
-            }
-            float t = (float)j / INTERPOLATION_COUNT;
-            glm::vec3 sample = glm::vec3(solved * glm::vec3(t * t, t, 1.0f), 0.0f);
-            prev = sample;
-            ret.push_back(sample);
+        for (int j = 0; j <= INTERPOLATION_COUNT; j++) {
+            float t = (float) j / INTERPOLATION_COUNT;
+            glm::vec3 sample = glm::vec3(solved * glm::vec4(t * t * t, t * t, t, 1.0f), 0.0f);
+            interpolated.push_back(sample);
         }
     }
-    if (executed) {
-        ret.push_back(keypoints[keypoints.size() - 1]);
-    }
-    // Now propagate backward!
-    for (int i = anchor - 1; i >= 0; i--) {
-        glm::vec3 kp1 = keypoints[i];
-        glm::vec3 kp2 = keypoints[i + 1];
-        glm::mat3x2 solved(1.0f);
-        if (i + 2 >= keypoints.size() && !executed) {
-            glm::mat3x2 initial = glm::mat3x2(glm::vec2(0.0f), slope, glm::vec2(0.0f));
-            solved = solve(kp1, kp2, {}, initial);
-        }
-        else {
-            solved = solve(kp1, kp2, {}, solves[i + 1]);
-        }
 
-        solves[i] = solved;
-        glm::vec3 prev(0.0f);
-        ret.push_back(kp1);
-        for (int j = 1; j <= INTERPOLATION_COUNT; j++) {
-            if (j != 1) {
-                ret.push_back(prev);
-            }
-            float t = (float)j / INTERPOLATION_COUNT;
-            glm::vec3 sample = glm::vec3(solved * glm::vec3(t * t, t, 1.0f), 0.0f);
-            prev = sample;
-            ret.push_back(sample);
-        }
+    for (int i = 0; i < interpolated.size() - 1; i++) {
+        ret.push_back(interpolated[i]);
+        ret.push_back(interpolated[i + 1]);
     }
     return ret;
 }
 
 void SplineRenderer::set_keypoints(std::vector<glm::vec3>& keypoints) {
     this->keypoints = keypoints;
+    std::uniform_real_distribution<float> distrib;
+    std::random_device dev;
+    while (directions.size() < keypoints.size()) {
+        directions.push_back(glm::normalize(glm::vec2(distrib(dev) * 2.0f - 1.0f, distrib(dev) * 2.0f - 1.0f)));
+    }
     expanded = expand(keypoints);
 
     glBindVertexArray(VAO);
@@ -117,9 +86,6 @@ SplineRenderer::SplineRenderer() {
 
     highlight = -1;
     tangent = -1;
-
-    anchor = 0;
-    slope = glm::normalize(glm::vec2(1.0f));
 }
 
 
@@ -127,16 +93,8 @@ void SplineRenderer::render() {
     if (tangent != -1) {
         glm::vec2 center_point = glm::vec2(keypoints[tangent]);
         tangent_lines.clear();
-        float dx = -1.0f;
-        float dy = -1.0f;
-        if (tangent == solves.size()) {
-            dx = 2.0f * solves[tangent - 1][0][0] + solves[tangent - 1][1][0];
-            dy = 2.0f * solves[tangent - 1][0][1] + solves[tangent - 1][1][1];
-        }
-        else {
-            dx = solves[tangent][1][0];
-            dy = solves[tangent][1][1];
-        }
+        float dx = directions[tangent].x;
+        float dy = directions[tangent].y;
         glm::vec2 dir = glm::normalize(glm::vec2(dx, dy)) * 1.0f / scale;
 
         float z1 = 0.0f, z2 = 0.0f;
@@ -185,14 +143,6 @@ void SplineRenderer::set_tangent(int tangent) {
     this->tangent = tangent;
 }
 
-void SplineRenderer::set_anchor(int anchor) {
-    this->anchor = anchor;
-}
-
-int SplineRenderer::get_anchor() {
-    return anchor;
-}
-
 void SplineRenderer::set_highlight(int highlight) {
     if (highlight != this->highlight) {
         glBindVertexArray(dots_VAO);
@@ -210,7 +160,7 @@ void SplineRenderer::set_highlight(int highlight) {
 }
 
 void SplineRenderer::set_slope(glm::vec2 slope) {
-    this->slope = slope;
+    directions[tangent] = slope;
 }
 
 void SplineRenderer::set_tangent_highlight(int highlight) {

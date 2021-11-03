@@ -16,10 +16,6 @@ public:
 
     virtual void set_keypoints(std::vector<glm::vec3> &keypoints) = 0;
 
-    virtual void set_anchor(int anchor) = 0;
-
-    virtual int get_anchor() = 0;
-
     virtual void set_highlight(int highlight) = 0;
 
     virtual void set_slope(glm::vec2 slope) = 0;

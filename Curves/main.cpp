@@ -43,7 +43,7 @@ int main(int argc, const char* argv[]) {
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    int num_points = 5;
+    int num_points = 2;
     std::vector<glm::vec3> keypoints;
     std::uniform_real_distribution distrib;
     std::random_device dev;
@@ -295,9 +295,6 @@ int main(int argc, const char* argv[]) {
             if (ui_state.state == State::Nothing && !io.WantCaptureMouse) {
                 // Create, then enter dragging state
                 keypoints.push_back(glm::vec3(mouse, 0.0f));
-                if (ui_state.renderer_state == RendererState::Spline && renderer->get_anchor() == keypoints.size() - 2) {
-                    renderer->set_anchor(keypoints.size() - 1);
-                }
                 renderer->set_keypoints(keypoints);
                 // Highlight this one
                 ui_state.state = State::Highlighting;
@@ -340,7 +337,6 @@ int main(int argc, const char* argv[]) {
                 if (ui_state.tangent_highlighting_item.first == 1) {
                     pos = -pos;
                 }
-                renderer->set_anchor(ui_state.selected_item);
                 renderer->set_slope(pos);
                 renderer->set_keypoints(keypoints);
             }

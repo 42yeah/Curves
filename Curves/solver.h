@@ -5,4 +5,4 @@
 #include <optional>
 
 
-glm::mat3x2 solve(glm::vec3 kp1, glm::vec3 kp2, std::optional<glm::mat3x2> prev_mat, std::optional<glm::mat3x2> next_mat);
+glm::mat4x2 solve(glm::vec3 kp1, glm::vec3 kp2, glm::vec2 dir1, glm::vec2 dir2);
